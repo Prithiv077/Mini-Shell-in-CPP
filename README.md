@@ -227,5 +227,3 @@ This project helped reinforce:
 
 ---
 
-
-Associate Software Engineer | Java Developer | Operating Systems Enthusiast
