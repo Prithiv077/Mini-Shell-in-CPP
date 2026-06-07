@@ -1,46 +1,231 @@
-# Mini-Shell-in-CPP
-A Unix shell implementation written in C, built from scratch. Supports core shell features including built-in commands, process execution, I/O redirection, pipes, background processes, and the source command.
+# MiniShell - Unix Shell Implementation in C++
 
-Features
-Built-in Commands
-Executed directly in the shell process without forking:
-CommandDescriptioncd [dir]Change current directorypwdPrint working directoryexitExit the shellechoPrint arguments to stdoutsource <file>Execute script in current shell context
+A lightweight Unix-like shell built in C++ to understand core Operating System concepts such as process creation, process management, inter-process communication (IPC), file descriptors, redirection, and command execution.
 
-cd and source must be builtins — they modify the shell's own state and cannot run in a child process.
+## Features
 
-Process Execution
-External commands are run using fork() + exec():
+### Built-in Commands
 
-fork() creates a child process
-execvp() replaces the child with the target program
-Parent waits with waitpid() for foreground processes
+* `cd <directory>` - Change current working directory
+* `pwd` - Print current working directory
+* `history` - Display command history
+* `source <file>` - Execute commands from a script file
+* `exit` - Exit the shell
 
-I/O Redirection
-Redirect input and output using standard operators:
-bashcommand > output.txt       # Redirect stdout to file
-command < input.txt        # Redirect stdin from file
-command >> output.txt      # Append stdout to file
-Implemented using open(), dup2(), and close() on file descriptors.
-Pipes
-Connect processes so the output of one becomes the input of the next:
-bashls | grep foo
-cat file.txt | wc -l
-Implemented using pipe() and dup2() to wire stdout → stdin across processes.
-Background Processes
-Run commands without blocking the shell:
-bashcommand &
-The shell forks the child and continues without calling waitpid(), allowing the next command to be entered immediately.
-Source Command
-Run a shell script in the current shell environment:
-bashsource script.sh
-Unlike normal execution, source does not fork — commands in the script run in the current process, so variable changes and cd calls affect the active shell session.
+### External Commands
 
-Build & Run
-bash# Compile
-gcc -o myshell shell.c
+Supports execution of standard Linux commands using `fork()` and `execvp()`:
 
-# Run
+```bash
+ls
+cat
+grep
+touch
+mkdir
+rm
+date
+whoami
+```
+
+### Input / Output Redirection
+
+```bash
+ls > output.txt
+ls >> output.txt
+cat < input.txt
+```
+
+### Pipes
+
+```bash
+ls | grep cpp
+cat file.txt | sort
+```
+
+### Background Processes
+
+```bash
+sleep 10 &
+```
+
+Runs processes in the background without blocking the shell.
+
+---
+
+## Operating System Concepts Implemented
+
+### Process Creation
+
+```cpp
+fork()
+```
+
+Creates a child process for command execution.
+
+### Program Execution
+
+```cpp
+execvp()
+```
+
+Replaces the child process image with the requested command.
+
+### Process Synchronization
+
+```cpp
+waitpid()
+```
+
+Waits for foreground processes to finish.
+
+### File Descriptors
+
+```cpp
+STDIN_FILENO
+STDOUT_FILENO
+```
+
+Used for implementing redirection.
+
+### File Operations
+
+```cpp
+open()
+close()
+```
+
+Used to access files for input and output redirection.
+
+### File Descriptor Duplication
+
+```cpp
+dup2()
+```
+
+Redirects standard input/output streams.
+
+### Inter Process Communication (IPC)
+
+```cpp
+pipe()
+```
+
+Used to implement shell pipelines.
+
+---
+
+## Project Structure
+
+```text
+MiniShell
+│
+├── main.cpp
+├── Shell.h
+├── Shell.cpp
+│
+├── Parser.h
+├── Parser.cpp
+│
+├── Builtins.h
+├── Builtins.cpp
+│
+├── Executor.h
+├── Executor.cpp
+```
+
+---
+
+## Build
+
+Compile using g++:
+
+```bash
+g++ *.cpp -o myshell
+```
+
+---
+
+## Run
+
+```bash
 ./myshell
+```
 
-System Calls Used
-System CallPurposefork()Create child processexecvp()Execute external commandwaitpid()Wait for child to finishpipe()Create pipe between processesdup2()Redirect file descriptorsopen() / close()File operations for redirectionchdir()Underlying call for cdgetcwd()Underlying call for pwd
+---
+
+## Example Usage
+
+### Built-in Commands
+
+```bash
+myshell> pwd
+/home/user/project
+
+myshell> cd ..
+
+myshell> history
+```
+
+### External Commands
+
+```bash
+myshell> ls
+myshell> whoami
+myshell> date
+```
+
+### Redirection
+
+```bash
+myshell> ls > files.txt
+
+myshell> cat < files.txt
+```
+
+### Pipes
+
+```bash
+myshell> ls | grep cpp
+```
+
+### Background Processes
+
+```bash
+myshell> sleep 20 &
+```
+
+### Source Command
+
+commands.txt
+
+```text
+pwd
+date
+whoami
+```
+
+```bash
+myshell> source commands.txt
+```
+
+---
+
+## Learning Outcomes
+
+This project helped reinforce:
+
+* Process Management
+* Parent and Child Processes
+* System Calls
+* Linux File Descriptors
+* Shell Internals
+* Process Synchronization
+* Inter Process Communication (IPC)
+* Command Parsing
+* Input/Output Redirection
+* Background Job Execution
+
+---
+
+
+Associate Software Engineer | Java Developer | Operating Systems Enthusiast
